@@ -16,14 +16,14 @@
         </tr>
       </thead>
       <tbody id="list">
-        <tr v-for="row in selectedList()" :key="row">
-          <td>{{ row.id }}</td>
-          <td>{{ row.todo }}</td>
+        <tr v-for="todo in todos" :key="todo.id">
+          <td>{{ todo.id }}</td>
+          <td>{{ todo.todo }}</td>
           <td>
-            <button @click="checkTodo(row.id)">{{ taskStatus(row) }}</button>
+            <button @click="checkTodo(todo.id)">{{ taskStatus(todo) }}</button>
           </td>
           <td>
-            <button @click="deleteTodo(row.id)">削除</button>
+            <button @click="deleteTodo(todo.id)">削除</button>
           </td>
         </tr>
       </tbody>
@@ -41,25 +41,6 @@ export default {
     msg: String
   },
   methods: {
-    selectedList() {
-      let runningList = []
-      let finishedList = []
-      if (this.status === 'all') {
-        return this.$store.getters.todos
-      }
-      for(let i = 0; i < this.$store.getters.todos.length; i++) {
-        if (this.$store.getters.todos[i].isDone) {
-          finishedList.push(this.$store.getters.todos[i])
-        } else {
-          runningList.push(this.$store.getters.todos[i])
-        }
-      }
-      if (this.status === 'running') {
-        return runningList
-      } else {
-        return finishedList
-      }
-    },
     submitTodo() {
       const createTodo = {
         id: this.$store.getters.todos.length,
@@ -87,6 +68,20 @@ export default {
       set(value) {
         this.$store.commit('status', value);
       }
+    },
+    todos() {
+      const self = this
+      return this.$store.getters.todos.filter(
+        function(value) {
+          if (self.status === 'all') {
+            return value
+          } else if (self.status === 'running') {
+            return value.isDone === false
+          } else {
+            return value.isDone === true
+          }
+        }
+      )
     },
   }
 }
