@@ -70,12 +70,10 @@ export default {
       }
     },
     todos() {
-      const self = this
-      return this.$store.getters.todos.filter(
-        function(value) {
-          if (self.status === 'all') {
+      return this.$store.getters.todos.filter(value => {
+          if (this.status === 'all') {
             return value
-          } else if (self.status === 'running') {
+          } else if (this.status === 'running') {
             return value.isDone === false
           } else {
             return value.isDone === true
